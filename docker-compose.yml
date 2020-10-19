@@ -1,0 +1,42 @@
+version: '3.5'
+
+services:
+  backend:
+    image: "moodlenet/moodlenet:stable" # use stable/production/master release of backend
+    expose:
+      - 4000
+    env_file:
+      - env.d/db
+      - env.d/moodlenet
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/var/www/uploads
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/images/frontend/Dockerfile
+    image: moodlenet:frontend
+    ports:
+     - "8090:8090"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:9.6-alpine
+    volumes:
+       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - env.d/db
+
+  mailcatcher:
+    image: sj26/mailcatcher:latest
+    ports:
+      - "1080:1080"
+  
+volumes:
+   postgres_data:

@@ -1,0 +1,37 @@
+# server domain name:
+HOSTNAME=localhost
+# leave the following empty by default, or include the full URL of the client app, only if that is different from FRONTEND_BASE_URL and you want the webserver (Caddy) in the server container to proxy frontend requests to that URL
+PROXY_FRONTEND_URL=
+# if you set PROXY_FRONTEND_URL, then FRONTEND_HOSTNAME should contain only the domain name of that URL
+FRONTEND_HOSTNAME=localhost
+# full backend URL - server protocol, domain name, and port (if it isn't the default for protocol lile 80 or 443):
+BASE_URL=http://localhost:8090
+# full client app URL, where users will browse the site (usually the same as BASE_URL, in which case you can leave it empty)
+FRONTEND_BASE_URL=
+# URL (or root path) of the backend API
+REACT_APP_GRAPHQL_ENDPOINT=/api/graphql
+# URL for websockets 
+REACT_APP_PHOENIX_SOCKET_ENDPOINT=ws://localhost/api/socket
+# cc public activities to the mothership for indexing
+CONNECT_WITH_MOTHERSHIP=false
+# which mothership environment to search (defaults to a test index, change this in production)
+REACT_APP_MOTHERSHIP_ENV=moodlenet_mothership_next
+# a tagline for your instance
+INSTANCE_DESCRIPTION=An instance of MoodleNet, a federated network for educators.
+# whether to require an email address to first be invited (or access-listed with MoodleNet.Access) before being able to sign up
+INVITE_ONLY=true
+# text which appears if invinte only (leave empty if n/a)
+#REACT_APP_INVITE_ONLY_TEXT=Please note that signups on this instance are currently invite-only.
+# whether to automatically alter the database schema when you upgrade the app
+AUTORUN_DB_MIGRATIONS=true
+# you should not have to edit the following ones
+REACT_APP_MOTHERSHIP_API_ID=KVG4RFL0JJ
+DATABASE_HOST=db
+SECRET_KEY_BASE=generate-a-random-secure-string-here
+PORT=4000
+ACME_AGREE=true
+LANG=en_US.UTF-8
+REPLACE_OS_VARS=true
+CI=false
+MAIL_SERVER=
+MAIL_KEY=
