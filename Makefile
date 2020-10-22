@@ -1,5 +1,8 @@
 # -- Docker
-COMPOSE              = docker-compose
+DOCKER_UID           = $(shell id -u)
+DOCKER_GID           = $(shell id -g)
+DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
+COMPOSE              = DOCKER_USER=$(DOCKER_USER) docker-compose
 
 default: help
 
@@ -10,9 +13,19 @@ bootstrap: \
 .PHONY: bootstrap
 
 
-build: ## Build frontend image
-	@$(COMPOSE) build app
+build: ## Build docker images
+build: \
+	build-back \
+	build-front
 .PHONY: build
+
+build-back: ## Build backend image
+	@$(COMPOSE) build backend
+.PHONY: build-back
+
+build-front: ## Build frontend image
+	@$(COMPOSE) build frontend
+.PHONY: build-front
 
 run: ## Run all docker service
 	@$(COMPOSE) up -d

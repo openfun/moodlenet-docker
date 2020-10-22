@@ -2,9 +2,19 @@ version: '3.5'
 
 services:
   backend:
-    image: "moodlenet/moodlenet:stable" # use stable/production/master release of backend
+    build:
+      context: .
+      dockerfile: ./docker/images/backend/Dockerfile
+      target: moodlenet
+      args:
+        BACKEND_VERSION: "master"
+        DOCKER_USER: ${DOCKER_USER:-1000}
+    user: ${DOCKER_USER:-1000}
+    image: moodlenet:backend
     expose:
       - 4000
+    ports:
+      - "4000:4000"
     env_file:
       - env.d/db
       - env.d/moodlenet
@@ -13,7 +23,7 @@ services:
     volumes:
       - ./uploads:/var/www/uploads
 
-  app:
+  frontend:
     build:
       context: .
       dockerfile: ./docker/images/frontend/Dockerfile
@@ -37,6 +47,6 @@ services:
     image: sj26/mailcatcher:latest
     ports:
       - "1080:1080"
-  
+
 volumes:
    postgres_data:
