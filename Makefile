@@ -20,7 +20,7 @@ build: \
 .PHONY: build
 
 build-back: ## Build backend image
-	@$(COMPOSE) build backend
+	bin/build moodlenet:backend
 .PHONY: build-back
 
 build-front: ## Build frontend image
