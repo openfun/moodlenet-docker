@@ -7,7 +7,7 @@ services:
       dockerfile: ./docker/images/backend/Dockerfile
       target: moodlenet
       args:
-        BACKEND_VERSION: "master"
+        BACKEND_VERSION: ${BACKEND_VERSION:-master}
         DOCKER_USER: ${DOCKER_USER:-1000}
     user: ${DOCKER_USER:-1000}
     image: moodlenet:backend

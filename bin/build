@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+function usage() {
+    echo -e "Usage: bin/build [TAG]
+
+OPTIONS:
+  -h, --help   print this message
+
+ARGUMENTS:
+  TAG        image tag in the format name:tag
+"
+}
+
+
+# Build moodlenet-backend image
+#
+# Usage: build TAG
+function build() {
+    tag="${1}"
+    version=$(cat docker/images/backend/UPSTREAM_VERSION)
+    docker_user="$(id -u):$(id -g)"
+
+    echo -e "${COLOR_INFO}Building the moodlenet-backend image with " \
+    "upstream version ${version}${COLOR_RESET}"
+
+    BACKEND_VERSION="${version}" DOCKER_USER="${docker_user}" docker-compose build backend
+    if [ "${tag}" -ne "moodlenet:backend" ]; then
+      docker tag moodlenet:backend "${tag}"
+    fi
+
+    # Show the built images
+    docker images "${tag}"
+}
+
+for i in "$@"
+    do
+        case $i in
+            -h|--help|help)
+                usage
+                exit 0
+                ;;
+            *)
+        esac
+    done
+
+if [ -z "${1}" ]; then
+  usage
+  exit 0
+fi
+
+build "${1}"
