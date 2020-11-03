@@ -26,7 +26,7 @@ function build() {
     "upstream version ${version}${COLOR_RESET}"
 
     BACKEND_VERSION="${version}" DOCKER_USER="${docker_user}" docker-compose build backend
-    if [ "${tag}" -ne "moodlenet:backend" ]; then
+    if [ "${tag}" != "moodlenet:backend" ]; then
       docker tag moodlenet:backend "${tag}"
     fi
 
