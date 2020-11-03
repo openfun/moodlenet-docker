@@ -48,5 +48,13 @@ services:
     ports:
       - "1080:1080"
 
+  terraform-state:
+    image: hashicorp/terraform:0.13.4
+    env_file: env.d/terraform
+    user: ${DOCKER_USER:-1000}
+    working_dir: /app
+    volumes:
+      - ./terraform/create_state_bucket:/app
+
 volumes:
    postgres_data:

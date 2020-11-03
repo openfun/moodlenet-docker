@@ -1,0 +1,4 @@
+# AWS admin credentials
+AWS_ACCESS_KEY_ID=yourAwsAccesKeyId
+AWS_SECRET_ACCESS_KEY=YourAwsSecretAccessKey
+AWS_DEFAULT_REGION=eu-west-1
