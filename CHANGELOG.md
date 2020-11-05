@@ -8,6 +8,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- deploy front application to preprod from circleci
+
 ## [1.0-beta.2020-10-04]
 
 ### Added
