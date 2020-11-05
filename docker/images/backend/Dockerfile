@@ -9,12 +9,12 @@ WORKDIR /download
 
 # Moodlenet backend version that you want to build (git commit, tag or branch name)
 # related to the official repository : https://gitlab.com/moodlenet/backend/
-ARG BACKEND_VERSION=master
+ARG MOODLENET_VERSION=master
 
-RUN wget "https://gitlab.com/moodlenet/backend/-/archive/${BACKEND_VERSION}/backend-${BACKEND_VERSION}.tar.gz" && \
-    tar xzf "backend-${BACKEND_VERSION}.tar.gz" && \
-    rm "backend-${BACKEND_VERSION}.tar.gz" && \
-    mv "backend-${BACKEND_VERSION}" backend
+RUN wget "https://gitlab.com/moodlenet/backend/-/archive/${MOODLENET_VERSION}/backend-${MOODLENET_VERSION}.tar.gz" && \
+    tar xzf "backend-${MOODLENET_VERSION}.tar.gz" && \
+    rm "backend-${MOODLENET_VERSION}.tar.gz" && \
+    mv "backend-${MOODLENET_VERSION}" backend
 
 # === BUILD ===
 FROM ${ELIXIR_IMAGE_NAME}:${ELIXIR_IMAGE_TAG} as builder
@@ -57,7 +57,7 @@ RUN echo "$LANG UTF-8" >> /etc/locale.gen && \
     update-locale LANG="$LANG"
 
 # The name of your application/release (required)
-ARG APP_NAME=Moodlenet-${BACKEND_VERSION}
+ARG APP_NAME=Moodlenet-${MOODLENET_VERSION}
 ENV APP_NAME=${APP_NAME}
 
 WORKDIR /app

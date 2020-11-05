@@ -7,7 +7,7 @@ services:
       dockerfile: ./docker/images/backend/Dockerfile
       target: moodlenet
       args:
-        BACKEND_VERSION: ${BACKEND_VERSION:-master}
+        MOODLENET_VERSION: ${BACKEND_VERSION:-master}
         DOCKER_USER: ${DOCKER_USER:-1000}
     user: ${DOCKER_USER:-1000}
     image: moodlenet:backend
@@ -27,6 +27,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/images/frontend/Dockerfile
+      args:
+        MOODLENET_VERSION: ${FRONTEND_VERSION:-master}
     image: moodlenet:frontend
     ports:
      - "8090:8090"
@@ -55,6 +57,14 @@ services:
     working_dir: /app
     volumes:
       - ./terraform/create_state_bucket:/app
+
+  terraform:
+    image: hashicorp/terraform:0.13.4
+    env_file: env.d/terraform
+    user: ${DOCKER_USER:-1000}
+    working_dir: /app
+    volumes:
+      - ./terraform:/app
 
 volumes:
    postgres_data:

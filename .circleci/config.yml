@@ -68,7 +68,7 @@ jobs:
       # Each image is tagged with the current git commit sha1 to avoid collisions in parallel builds.
       - run:
           name: Build production image
-          command: bin/build moodlenet-backend:${CIRCLE_SHA1}
+          command: bin/build backend moodlenet-backend:${CIRCLE_SHA1}
       - run:
           name: Check built image availability
           command: docker images "moodlenet-backend:${CIRCLE_SHA1}*"
@@ -86,7 +86,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Build production image (using cached layers)
-          command: bin/build moodlenet-backend:${CIRCLE_SHA1}
+          command: bin/build backend moodlenet-backend:${CIRCLE_SHA1}
       - run:
           name: Check built images availability
           command: docker images "moodlenet-backend:${CIRCLE_SHA1}*"

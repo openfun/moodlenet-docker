@@ -7,10 +7,14 @@ FROM busybox as downloader
 
 WORKDIR /download
 
-RUN wget https://gitlab.com/moodlenet/frontend/-/archive/master/frontend-master.tar.gz && \
-    tar xzf frontend-master.tar.gz && \
-    rm frontend-master.tar.gz && \
-    mv frontend-master frontend
+# Moodlenet frontend version that you want to build (git commit, tag or branch name)
+# related to the official repository : https://gitlab.com/moodlenet/frontend/
+ARG MOODLENET_VERSION=master
+
+RUN wget https://gitlab.com/moodlenet/frontend/-/archive/${MOODLENET_VERSION}/frontend-${MOODLENET_VERSION}.tar.gz && \
+    tar xzf frontend-${MOODLENET_VERSION}.tar.gz && \
+    rm frontend-${MOODLENET_VERSION}.tar.gz && \
+    mv frontend-${MOODLENET_VERSION} frontend
 
 # === BUILD ===
 FROM node:14-slim as builder
