@@ -2,3 +2,6 @@
 AWS_ACCESS_KEY_ID=yourAwsAccesKeyId
 AWS_SECRET_ACCESS_KEY=YourAwsSecretAccessKey
 AWS_DEFAULT_REGION=eu-west-1
+
+# The domain name used to serve frontend application, without scheme
+TF_VAR_cloudfront_moodlenet_domain_name=moodle.net
