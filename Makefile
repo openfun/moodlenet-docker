@@ -12,9 +12,9 @@ bootstrap: \
 	run
 .PHONY: bootstrap
 
-
 build: ## Build docker images
 build: \
+	env.d/terraform
 	build-back \
 	build-front
 .PHONY: build
@@ -50,3 +50,6 @@ shell: ## Runs an iex console
 help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
+
+env.d/terraform:
+	cp env.d/terraform.dist env.d/terraform

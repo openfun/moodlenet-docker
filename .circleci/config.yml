@@ -65,10 +65,13 @@ jobs:
       # Activate docker-in-docker (with layers caching enabled)
       - setup_remote_docker:
           docker_layer_caching: true
+      - run:
+          name: create needed file env.d/terraform
+          command: cp env.d/terraform.dist env.d/terraform
       # Each image is tagged with the current git commit sha1 to avoid collisions in parallel builds.
       - run:
           name: Build production image
-          command: bin/build moodlenet-backend:${CIRCLE_SHA1}
+          command: bin/build backend moodlenet-backend:${CIRCLE_SHA1}
       - run:
           name: Check built image availability
           command: docker images "moodlenet-backend:${CIRCLE_SHA1}*"
@@ -86,7 +89,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Build production image (using cached layers)
-          command: bin/build moodlenet-backend:${CIRCLE_SHA1}
+          command: bin/build backend moodlenet-backend:${CIRCLE_SHA1}
       - run:
           name: Check built images availability
           command: docker images "moodlenet-backend:${CIRCLE_SHA1}*"
@@ -141,6 +144,55 @@ jobs:
               docker push fundocker/moodlenet-backend:latest
             fi
 
+  build-front-preprod:
+    docker:
+      - image: circleci/node:14
+    working_directory: ~/fun
+    steps:
+      - checkout
+      - run: 
+          name: Download moodlenet front source code
+          command: |
+            version=$(cat docker/images/frontend/UPSTREAM_VERSION)
+            wget https://gitlab.com/moodlenet/frontend/-/archive/${version}/frontend-${version}.tar.gz
+            tar xzf frontend-${version}.tar.gz
+            rm frontend-${version}.tar.gz
+            mv frontend-${version} frontend
+
+      - run:
+          name: build frontend application
+          command: |
+            cd frontend
+            yarn
+            REACT_APP_GRAPHQL_ENDPOINT=${PREPROD_REACT_APP_GRAPHQL_ENDPOINT} BASE_URL=${PREPROD_BASE_URL} FRONTEND_BASE_URL=${PREPROD_FRONTEND_BASE_URL} CI=false yarn build --prod
+
+      - persist_to_workspace:
+          root: ~/fun
+          paths:
+            - frontend/build/*
+
+  deploy-front-preprod:
+    docker:
+      - image: cimg/python:3.8
+    working_directory: ~/fun
+    steps:
+      - attach_workspace:
+          at: ~/fun
+
+      - run:
+          name: install aws cli
+          command: |
+            pip install -U pip
+            pip install awscli
+
+      - run:
+          name: deploy to preprod bucket
+          command: |
+            cd frontend
+            aws s3 sync build/ s3://${PREPROD_BUCKET} --delete --exclude .git --exclude README.md
+            aws cloudfront create-invalidation --distribution-id ${PREPROD_DISTRIBUTION_ID} --paths '/*'
+
+
 workflows:
   version: 2
 
@@ -188,3 +240,19 @@ workflows:
               only: main
             tags:
               only: /^v.*/
+
+      - build-front-preprod:
+          filters:
+            branches:
+              only: main
+            tags:
+              ignore: /.*/
+
+      - deploy-front-preprod:
+          requires:
+            - build-front-preprod
+          filters:
+            branches:
+              only: main
+            tags:
+              ignore: /.*/

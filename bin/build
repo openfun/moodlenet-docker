@@ -3,12 +3,13 @@
 set -eo pipefail
 
 function usage() {
-    echo -e "Usage: bin/build [TAG]
+    echo -e "Usage: bin/build SERVICE [TAG]
 
 OPTIONS:
   -h, --help   print this message
 
 ARGUMENTS:
+  SERVICE    the service to build. Must be backend or frontend
   TAG        image tag in the format name:tag
 "
 }
@@ -18,16 +19,23 @@ ARGUMENTS:
 #
 # Usage: build TAG
 function build() {
-    tag="${1}"
-    version=$(cat docker/images/backend/UPSTREAM_VERSION)
+    service="${1}"
+
+    if [[ "${service}" != "backend" ]] && [[ "${service}" != "frontend" ]]; then
+      echo "service ${service} must be backend or frontend"
+      exit 1
+    fi
+
+    tag="${2}"
+    version=$(cat docker/images/${service}/UPSTREAM_VERSION)
     docker_user="$(id -u):$(id -g)"
 
-    echo -e "${COLOR_INFO}Building the moodlenet-backend image with " \
+    echo -e "${COLOR_INFO}Building the moodlenet-${service} image with " \
     "upstream version ${version}${COLOR_RESET}"
 
-    BACKEND_VERSION="${version}" DOCKER_USER="${docker_user}" docker-compose build backend
-    if [ "${tag}" != "moodlenet:backend" ]; then
-      docker tag moodlenet:backend "${tag}"
+    MOODLENET_VERSION="${version}" DOCKER_USER="${docker_user}" docker-compose build ${service}
+    if [ "${tag}" != "moodlenet:${service}" ]; then
+      docker tag moodlenet:${service} "${tag}"
     fi
 
     # Show the built images
@@ -50,4 +58,4 @@ if [ -z "${1}" ]; then
   exit 0
 fi
 
-build "${1}"
+build "$@"

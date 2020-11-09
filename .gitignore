@@ -1,1 +1,7 @@
 /uploads
+env.d/terraform
+
+# Terraform
+.terraform
+*.tfstate
+*.tfstate.backup
